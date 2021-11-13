@@ -1,0 +1,64 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--一个mapper对应一个接口-->
+<mapper namespace="com.csnz.dao.Bill.BillMapper">
+    <!--根据商品名称、供应商id、是否付款 查询订单总数-->
+    <select id="getBillCount" resultType="int">
+        select count(1) from smbms_bill b , smbms_provider p
+        <where>
+            b.providerId = p.id
+            <if test= "productName != null and !productName.trim().equals('')">
+                and b.productName like concat('%', #{ productName},'%')
+            </if>
+            <if test= "providerId != 0">
+                and b.providerId = #{ providerId }
+            </if>
+            <if test= "isPayment != 0">
+                and b.isPayment = #{ isPayment }
+            </if>
+        </where>
+    </select>
+    <!--根据商品名称、供应商id、是否付款、当前页码、总页数 查询订单列表-->
+    <select id = "getBillList" resultType="Bill">
+        select b.* , p.proName as providerName from smbms_bill b,smbms_provider p
+        <where>
+            b.providerId = p.id
+            <if test= "productName != null and !productName.trim().equals('')">
+                and b.productName like concat('%', #{ productName} , '%')
+            </if>
+            <if test= "providerId != 0">
+                and b.providerId = #{ providerId }
+            </if>
+            <if test= "isPayment != 0">
+                and b.isPayment = #{ isPayment }
+            </if>
+        </where>
+        order by b.creationDate desc limit #{ currentPageNo } , #{ pageSize }
+    </select>
+
+    <!--新添订单-->
+    <insert id="addBill">
+        insert into smbms_bill
+        (`billCode`,`productName`,`productDesc`,`productUnit`,`productCount`,`totalPrice`,`isPayment`,`createdBy`,`creationDate`,`providerId`)
+        values
+        ( #{ bill.billCode } ,  #{ bill.productName } ,  #{ bill.productDesc } ,  #{ bill.productUnit } ,  #{ bill.productCount } ,  #{ bill.totalPrice } ,  #{ bill.isPayment } ,  #{ bill.createdBy } ,  #{ bill.creationDate } ,  #{ bill.providerId })
+    </insert>
+
+    <!--根据 订单id 查询订单信息-->
+    <select id="findBill" resultType="Bill">
+        select b.*,p.proName as providerName from smbms_bill b,smbms_provider p
+        where b.id = #{ billId } and b.providerId = p.id
+    </select>
+
+
+    <!--修改 订单信息-->
+    <update id="updateBill">
+        update smbms_bill set `billCode` = #{ bill.billCode }, `productName` = #{ bill.productName},`productDesc` = #{ bill.productDesc},`productUnit` = #{ bill.productUnit},`productCount` = #{ bill.productCount },`totalPrice` = #{ bill.totalPrice },`isPayment` = #{ bill.isPayment},`modifyBy` = #{ bill.modifyBy },`modifyDate` = #{ bill.modifyDate} where id = #{ billId }
+    </update>
+
+    <!--根据id 删除 订单-->
+    <delete id="deleteBill">
+        delete from smbms_bill where id = #{ billId }
+    </delete>
+</mapper>

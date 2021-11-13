@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--1、关联数据库配置文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!--2、配置连接池
+        dbcp:半自动化操作，不能自动连接
+        c3p0:自动化操作（自动化的加载配置文件，并且可以自动设置到对象中）
+    -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--c3p0连接池的私有属性-->
+        <property name="maxPoolSize" value="30"/>
+        <property name="minPoolSize" value="10"/>
+        <!--关闭连接后不自动commit-->
+        <property name="autoCommitOnClose" value="false"/>
+        <!--获取连接超时时间-->
+        <property name="checkoutTimeout" value="10000"/>
+        <!--当获取连接失败重试次数-->
+        <property name="acquireRetryAttempts" value="2"/>
+    </bean>
+
+    <!--3、sqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--绑定mybatis的配置文件-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+    <!--4、配置dao接口扫描包，动态的实现了dao接口可以注入到Spring容器中（tips：之前是用实现类继承support类或者 注入template模板）-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入 sqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--要扫描的dao包-->
+        <property name="basePackage" value="com.csnz.dao"/>
+    </bean>
+
+</beans>

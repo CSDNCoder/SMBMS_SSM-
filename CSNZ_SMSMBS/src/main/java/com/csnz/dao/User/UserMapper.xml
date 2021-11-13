@@ -1,0 +1,70 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--    一个mapper对应一个接口    -->
+<mapper namespace="com.csnz.dao.User.UserMapper">
+
+    <!--    登陆时 从数据库中查找此 用户userCode -->
+    <select id="findUserByUserCode" resultType="user">
+        select * from smbms_user where userCode = #{userCode}
+    </select>
+
+    <!--更新密码操作-->
+    <update id="updatePassword" parameterType="Map">
+        update smbms_user set userPassword = #{newPassword} where id = #{userId}
+    </update>
+
+    <!--根据 用户名 或 角色 查找 用户总数-->
+    <select id="getUserCounts" resultType="Integer" >
+        select count(1)  from smbms_user u , smbms_role r
+        <where>
+            u.userRole = r.id
+            <if test="username != null">
+                and u.userName like CONCAT(CONCAT('%',#{ username }),'%')
+            </if>
+            <if test="userRole != 0">
+                and u.userRole = #{ userRole }
+            </if>
+        </where>
+    </select>
+
+    <!--根据条件 查询 获取用户列表 userlist-->
+    <select id="getUserList" resultType="User">
+        select u.*,r.roleName as userRoleName
+        from smbms_user u, smbms_role r
+        <where>
+            u.userRole = r.id
+            <if test="username != null and !username.trim().equals('')">
+                and u.username like CONCAT('%',#{ username },'%')
+            </if>
+            <if test="userRole != 0">
+                and u.userRole = #{ userRole }
+            </if>
+        </where>
+        order by u.creationDate DESC limit #{ currentPageNo },#{ pageSize }
+    </select>
+
+
+    <!--根据用户id 查询用户信息-->
+    <select id="findById" resultType="User">
+        select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.id = #{ id } and u.userRole = r.id
+    </select>
+
+    <!--用户管理模块中的 子模块 —— 添加用户-->
+    <insert id="addUser">
+        insert into smbms_user
+        (`userCode`,`userName`,`userPassword`,`gender`,`birthday`,`phone`,`address`,`userRole`,`createdBy`,`creationDate`)
+        values
+        (#{ userCode } , #{ userName } , #{ userPassword } , #{ gender } , #{ birthday } , #{ phone } ,  #{ address } ,  #{ userRole } ,  #{ createdBy } ,  #{ creationDate }  )
+    </insert>
+
+    <!--用户管理模块中的子模块 —— 更改用户信息-->
+    <update id="modify">
+        update smbms_user set userName = #{ user.userName },gender = #{ user.gender },birthday =#{ user.birthday },phone = #{ user.phone },address = #{ user.address },userRole = #{ user.userRole },modifyBy = #{ user.modifyBy },modifyDate = #{ user.modifyDate } where id = #{ id }
+    </update>
+
+    <!--用户管理模块中的子模块 —— 删除用户-->
+    <delete id="deleteUser">
+        delete from smbms_user where id = #{ userId }
+    </delete>
+</mapper>

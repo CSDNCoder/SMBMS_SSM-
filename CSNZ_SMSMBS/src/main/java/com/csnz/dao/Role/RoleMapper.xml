@@ -1,0 +1,11 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--    一个mapper对应一个接口  -->
+<mapper namespace="com.csnz.dao.Role.RoleMapper">
+
+<!--获取用户角色列表-->
+    <select id="getRoleList" resultType="Role">
+        select * from smbms_role
+    </select>
+</mapper>

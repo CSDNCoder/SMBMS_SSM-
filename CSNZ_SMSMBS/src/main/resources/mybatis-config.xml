@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--configuration核心配置文件 整合的话 mybatis只需要负责两样东西 别名 和 mapper映射-->
+<configuration>
+    <!--配置日志-->
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <!--配置数据源的事情 让spring做-->
+    <typeAliases>
+        <package name="com.csnz.pojo"/>
+    </typeAliases>
+
+<!--MapperRegistry:注册绑定我们的Mapper文件 因为我们spring-dao.xml 中配置了dao接口扫描包 所以此时我们这里不用重新注册 二选一即可
+    <mappers>
+        <mapper class="com.csnz.dao.User.UserMapper"/>
+        <mapper class="com.csnz.dao.Role.RoleMapper" />
+        <mapper class="com.csnz.dao.Bill.BillMapper"/>
+        <mapper class="com.csnz.dao.Provider.ProviderMapper"/>
+    </mappers>
+    -->
+</configuration>

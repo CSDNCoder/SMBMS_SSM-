@@ -1,0 +1,59 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--一个mapper对应一个接口-->
+<mapper namespace="com.csnz.dao.Provider.ProviderMapper">
+
+<!--根据供应商编码 或 供应商名称 查询供应商总数-->
+    <select id="getProviderCounts" resultType="int">
+        select count(1) from smbms_provider
+        <where>
+            <if test="proCode != null and !proCode.trim().equals('')">
+                and proCode = #{ proCode }
+            </if>
+            <if test="proName != null and !proName.trim().equals('')">
+                and proName like concat('%', #{ proName } , '%')
+            </if>
+        </where>
+    </select>
+
+<!--根据 供应商编码 和 供应商名称 和 当前页码、页码size 查询供应商数据列表-->
+    <select id="getProviderList" resultType="Provider">
+        select * from smbms_provider
+        <where>
+            <if test="proCode != null and !proCode.trim().equals('')">
+                and proCode = #{ proCode }
+            </if>
+            <if test="proName != null and !proName.trim().equals('')">
+                and proName like concat('%', #{ proName } , '%')
+            </if>
+        </where>
+        order by creationDate DESC limit #{ currentPageNo }, #{ pageSize }
+    </select>
+
+    <!--添加供应商-->
+    <insert id="addProvider">
+        insert into smbms_provider
+        (`proCode`,`proName`,`proDesc`,`proContact`,`proPhone`,`proAddress`,`proFax`,`createdBy`,`creationDate`)
+        values
+        ( #{ proCode } , #{ proName } , #{ proDesc } , #{ proContact } , #{ proPhone } , #{ proAddress } , #{ proFax } , #{ createdBy } , #{ creationDate } )
+    </insert>
+
+    <!--根据id 查询供应商信息-->
+    <select id="findById" resultType="Provider">
+        select * from smbms_provider where id = #{ proId }
+    </select>
+
+    <!--根据id 修改 供应商信息-->
+    <update id="updateProvider">
+        update smbms_provider set `proCode` = #{ provider.proCode } ,`proName` = #{ provider.proName }, `proContact` = #{ provider.proContact },
+        `proPhone` = #{ provider.proPhone },`proAddress` = #{ provider.proAddress } , `proFax` = #{ provider.proFax },`proDesc` = #{ provider.proDesc },
+        `modifyDate` = #{ provider.modifyDate },`modifyBy` = #{ provider.modifyBy }
+        where id = #{ proId }
+    </update>
+
+    <!--根据id 删除 供应商-->
+    <delete id="deleteProvider">
+        delete from smbms_provider where id = #{ proId }
+    </delete>
+</mapper>

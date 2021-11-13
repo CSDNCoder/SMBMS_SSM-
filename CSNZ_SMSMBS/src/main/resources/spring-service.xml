@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cotext="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+         https://www.springframework.org/schema/context/spring-context.xsd">
+    <!--1、扫描service下的包-->
+    <cotext:component-scan base-package="com.csnz.service"/>
+    <!--2、将我们所有业务类，注入到Spring，可以通过配置 或者 使用注解实现(@Service @AutoWire)-->
+<!--    <bean id="userServiceImpl" class="com.csnz.service.Impl.UserServiceImpl">-->
+<!--        <property name="userMapper" ref="userMapper"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="roleServiceImpl" class="com.csnz.service.Impl.RoleServiceImpl">-->
+<!--        <property name="roleMapper" ref="roleMapper"/>-->
+<!--    </bean>-->
+<!--    -->
+<!--    <bean id="billServiceImpl" class="com.csnz.service.Impl.BillServiceImpl">-->
+<!--        <property name="billMapper" ref="billMapper"/>-->
+<!--    </bean>-->
+    
+<!--    <bean id="pageSupport" class="com.csnz.util.PageSupport"/>-->
+
+    <!--3、声明式事务配置-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
